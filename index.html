@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CAPM Beta-Alpha Lab — beta y alfa, paso a paso</title>
+<meta name="description" content="Un laboratorio educativo interactivo que calcula beta, alfa y R² en vivo con datos reales: el modelo CAPM explicado paso a paso, de la regresión a la Security Market Line." />
+
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://capm-beta-lab.vercel.app/" />
+<meta property="og:title" content="CAPM Beta-Alpha Lab — beta y alfa, paso a paso" />
+<meta property="og:description" content="Un laboratorio educativo interactivo que calcula beta, alfa y R² en vivo con datos reales: el modelo CAPM explicado paso a paso, de la regresión a la Security Market Line." />
+<meta property="og:image" content="https://capm-beta-lab.vercel.app/assets/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="es" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="CAPM Beta-Alpha Lab — beta y alfa, paso a paso" />
+<meta name="twitter:description" content="Un laboratorio educativo interactivo que calcula beta, alfa y R² en vivo con datos reales: el modelo CAPM explicado paso a paso, de la regresión a la Security Market Line." />
+<meta name="twitter:image" content="https://capm-beta-lab.vercel.app/assets/og-image.png" />
+
+<link rel="stylesheet" href="assets/css/site.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+</head>
+<body>
+
+<div class="topnav">
+  <div class="wrap">
+    <div class="brand">CAPM<span>Lab</span></div>
+    <nav>
+      <a href="#intro" data-i18n="nav.intro">Intro</a>
+      <a href="#paso1" data-i18n="nav.paso1">1. Activos</a>
+      <a href="#paso2" data-i18n="nav.paso2">2. Datos</a>
+      <a href="#paso3" data-i18n="nav.paso3">3. Regresión</a>
+      <a href="#paso4" data-i18n="nav.paso4">4. Teoría</a>
+      <a href="#paso5" data-i18n="nav.paso5">5. Resultados</a>
+      <a href="#paso6" data-i18n="nav.paso6">6. SML</a>
+      <a href="#paso7" data-i18n="nav.paso7">7. Beta móvil</a>
+      <a href="#limitaciones" data-i18n="nav.limites">Límites</a>
+      <a href="#creador" data-i18n="nav.creador">Creador</a>
+    </nav>
+    <button type="button" id="lang-toggle" class="lang-toggle" aria-label="Switch language / Cambiar idioma">EN</button>
+  </div>
+</div>
+
+<header class="hero" id="intro">
+  <div class="wrap">
+    <p class="eyebrow" data-i18n="hero.eyebrow">Proyecto educativo · Capital Asset Pricing Model</p>
+    <h1 data-i18n="hero.h1">Beta y alfa: el modelo CAPM, paso a paso</h1>
+    <p class="lead" data-i18n="hero.lead">
+      El mismo año que Markowitz (1990), William Sharpe ganó el Nobel por una idea que
+      simplificó radicalmente la suya: en vez de necesitar la matriz de covarianza completa
+      entre todos los activos, el <strong>CAPM</strong> reduce el riesgo de un activo a un
+      solo número frente al mercado — su <em>beta</em>. Este sitio calcula beta, alfa y
+      R² en vivo con datos reales, con tus propios activos y benchmark.
+    </p>
+
+    <div class="control-bar">
+      <div class="field small">
+        <label for="asset-input" data-i18n="controls.assetLabel">Activo</label>
+        <input id="asset-input" type="text" value="AAPL" />
+      </div>
+      <div class="field small">
+        <label for="benchmark-input" data-i18n="controls.benchmarkLabel">Benchmark (mercado)</label>
+        <input id="benchmark-input" type="text" value="SPY" />
+      </div>
+      <div class="field small">
+        <label for="riskfree-input" data-i18n="controls.riskfreeLabel">Tasa libre de riesgo (% anual)</label>
+        <input id="riskfree-input" type="number" step="0.1" value="4" />
+      </div>
+      <div class="field small">
+        <label for="years-input" data-i18n="controls.yearsLabel">Años de histórico</label>
+        <input id="years-input" type="number" step="1" min="2" max="20" value="8" />
+      </div>
+      <button class="primary" id="recalc-btn" data-i18n="controls.recalcBtn">Recalcular</button>
+    </div>
+    <div class="status-line" id="status-line" data-i18n="controls.loadingDefault">Cargando ejemplo por defecto…</div>
+    <p style="font-size:13px; color:var(--text-faint); margin-top:10px; max-width:700px;" data-i18n="controls.tickerHint">
+      Los tickers deben existir en Yahoo Finance. Para acciones/ETFs de EE. UU. basta con el
+      símbolo normal (ej. <code>AAPL</code>, <code>SPY</code>).
+    </p>
+  </div>
+</header>
+
+<section class="step" id="paso1">
+  <div class="wrap">
+    <div class="step-head"><span class="step-num" data-i18n="paso1.badge">PASO 1</span><h2 data-i18n="paso1.title">Elegir el activo y el benchmark</h2></div>
+    <p data-i18n="paso1.p1">
+      El CAPM compara un activo contra "el mercado" — en la práctica, un índice amplio que
+      sirve de proxy (típicamente <strong>SPY</strong>, que replica el S&P 500). El resultado
+      depende del benchmark elegido: el mismo activo puede tener un beta distinto frente al
+      S&P 500, el Nasdaq, o un índice internacional.
+    </p>
+    <p data-i18n="paso1.p2">
+      Prueba cambiando el activo o el benchmark arriba: por ejemplo, compara una acción
+      tecnológica volátil contra el S&P 500 (<code>SPY</code>) y luego contra el Nasdaq
+      (<code>QQQ</code>) — el beta cambia porque el benchmark cambia.
+    </p>
+  </div>
+</section>
+
+<section class="step" id="paso2">
+  <div class="wrap">
+    <div class="step-head"><span class="step-num" data-i18n="paso2.badge">PASO 2</span><h2 data-i18n="paso2.title">Datos históricos y retornos</h2></div>
+    <p data-i18n="paso2.p">
+      Se descargan los precios de cierre diarios del activo y del benchmark, normalizados a
+      base 100, y se calculan los <strong>retornos logarítmicos diarios</strong> de ambos —
+      la materia prima de todo lo que sigue.
+    </p>
+    <div class="card"><div class="plot" id="plot-prices"></div></div>
+  </div>
+</section>
+
+<section class="step" id="paso3">
+  <div class="wrap">
+    <div class="step-head"><span class="step-num" data-i18n="paso3.badge">PASO 3</span><h2 data-i18n="paso3.title">Regresión: el activo contra el mercado</h2></div>
+    <p data-i18n="paso3.p">
+      Cada punto es un día: en el eje x, el retorno del benchmark ese día; en el eje y, el
+      retorno del activo. La <strong>recta ajustada por mínimos cuadrados</strong> (línea roja)
+      resume la relación — su <strong>pendiente es beta</strong> (cuánto se mueve el activo
+      por cada 1% que se mueve el mercado) y su <strong>intercepto es alfa</strong> (el
+      retorno diario que el activo obtiene incluso cuando el mercado no se mueve).
+    </p>
+    <div class="card"><div class="plot tall" id="plot-regression"></div></div>
+  </div>
+</section>
+
+<section class="step" id="paso4">
+  <div class="wrap">
+    <div class="step-head"><span class="step-num" data-i18n="paso4.badge">PASO 4</span><h2 data-i18n="paso4.title">La teoría del CAPM</h2></div>
+    <p data-i18n="paso4.p1">
+      El CAPM predice el retorno esperado de un activo a partir de un solo factor de riesgo, el mercado:
+    </p>
+    <div class="formula-block">$$ E[R_i] = R_f + \beta_i \big( E[R_m] - R_f \big) $$</div>
+    <p data-i18n="paso4.p2">
+      Donde <code>β</code> mide qué tan sensible es el activo a los movimientos del mercado.
+      Se obtiene de la regresión lineal del Paso 3, y tiene una fórmula cerrada equivalente en
+      términos de covarianza y varianza:
+    </p>
+    <div class="formula-block">$$ \beta_i = \frac{\text{Cov}(R_i, R_m)}{\text{Var}(R_m)} $$</div>
+    <p data-i18n="paso4.p3">
+      El <strong>alfa de Jensen</strong> es la diferencia entre el retorno real del activo y
+      lo que el CAPM predice — un alfa positivo históricamente significa que el activo rindió
+      más de lo que su riesgo sistemático justificaba:
+    </p>
+    <div class="formula-block">$$ \alpha_i = \bar{R_i} - \beta_i \, \bar{R_m} $$</div>
+    <p data-i18n="paso4.p4">
+      El CAPM también descompone el riesgo total del activo (su varianza) en dos partes: el
+      <strong>riesgo sistemático</strong> (el que viene de moverse con el mercado, no se
+      elimina diversificando) y el <strong>riesgo idiosincrático</strong> (específico del
+      activo, sí se elimina diversificando con más activos no correlacionados):
+    </p>
+    <div class="formula-block">$$ \text{Var}(R_i) = \underbrace{\beta_i^2 \, \text{Var}(R_m)}_{\text{sistemático}} + \underbrace{\text{Var}(\epsilon_i)}_{\text{idiosincrático}} $$</div>
+    <p data-i18n="paso4.p5">
+      Este sitio calcula beta, alfa, R² y la descomposición de riesgo con álgebra simple en
+      el navegador, en vivo (código en <code>assets/js/capm.js</code>).
+    </p>
+    <div class="callout" data-i18n="paso4.assumptions">
+      <strong>Supuestos del modelo — con honestidad sobre sus límites:</strong> asume que
+      todos los inversionistas tienen las mismas expectativas y pueden prestar/pedir prestado
+      a la misma tasa libre de riesgo, que los mercados son eficientes y sin fricciones
+      (costos de transacción, impuestos), y que el mercado es el <em>único</em> factor de
+      riesgo relevante. En la práctica el beta cambia con el tiempo (Paso 7), y modelos
+      multifactoriales (ej. Fama-French, que agrega tamaño y valor) explican mejor los
+      retornos observados. El CAPM sigue siendo el punto de partida — el "modelo de un
+      factor" que todos los demás modelos usan como base.
+    </div>
+  </div>
+</section>
+
+<section class="step" id="paso5">
+  <div class="wrap">
+    <div class="step-head"><span class="step-num" data-i18n="paso5.badge">PASO 5</span><h2 data-i18n="paso5.title">Resultados: beta, alfa y R²</h2></div>
+    <p data-i18n="paso5.p">
+      Con los datos del activo y benchmark elegidos, así quedan los tres números clave del
+      CAPM, más la descomposición del riesgo total en sistemático e idiosincrático.
+    </p>
+    <div id="stat-tiles" class="stat-grid"></div>
+    <div class="card">
+      <h3 style="font-size:1rem" data-i18n="paso5.interpretation">Interpretación</h3>
+      <p id="interpretation-text" style="margin:0"></p>
+    </div>
+  </div>
+</section>
+
+<section class="step" id="paso6">
+  <div class="wrap">
+    <div class="step-head"><span class="step-num" data-i18n="paso6.badge">PASO 6</span><h2 data-i18n="paso6.title">La Security Market Line</h2></div>
+    <p data-i18n="paso6.p">
+      La <strong>Security Market Line (SML)</strong> es la línea recta que traza el CAPM: para
+      cada nivel de beta, el retorno que "debería" tener un activo. Agrega varios activos abajo
+      para verlos ubicados frente a esa línea — por <strong>encima</strong> de la línea (alfa
+      positivo, en <span style="color:var(--accent)">azul</span>) o por
+      <strong>debajo</strong> (alfa negativo, en <span style="color:var(--accent3)">rojo</span>).
+    </p>
+    <div class="control-bar" style="margin-top:0">
+      <div class="field">
+        <label for="sml-ticker-entry" data-i18n="paso6.assetsLabel">Activos a comparar (uno a la vez — Enter para agregar)</label>
+        <div class="ticker-chips" id="sml-ticker-chips">
+          <input id="sml-ticker-entry" type="text" placeholder="Ej. MSFT" autocomplete="off" spellcheck="false" />
+        </div>
+      </div>
+      <button class="primary" id="sml-update-btn" data-i18n="paso6.updateBtn">Actualizar SML</button>
+    </div>
+    <div class="status-line" id="sml-status-line" style="margin-top:8px"></div>
+    <div class="card" style="margin-top:16px"><div class="plot tall" id="plot-sml"></div></div>
+  </div>
+</section>
+
+<section class="step" id="paso7">
+  <div class="wrap">
+    <div class="step-head"><span class="step-num" data-i18n="paso7.badge">PASO 7</span><h2 data-i18n="paso7.title">Beta móvil: ¿es beta constante?</h2></div>
+    <p data-i18n="paso7.p">
+      Todo lo anterior asume un beta fijo para todo el histórico. En la práctica no lo es:
+      recalculando beta sobre una <strong>ventana móvil de 252 días</strong> (un año de
+      operación) y desplazándola día a día, se ve cómo cambia con el tiempo — a veces por
+      cambios reales en el negocio, a veces por régimen de mercado (ej. betas que suben en
+      crisis, cuando "todo cae junto").
+    </p>
+    <div class="card"><div class="plot" id="plot-rolling-beta"></div></div>
+  </div>
+</section>
+
+<section class="step" id="limitaciones">
+  <div class="wrap">
+    <div class="step-head"><span class="step-num" data-i18n="limits.badge">LÍMITES</span><h2 data-i18n="limits.title">Limitaciones y para seguir leyendo</h2></div>
+    <div class="callout danger" data-i18n="limits.callout">
+      Este sitio es material educativo, no asesoría financiera. Los datos vienen de Yahoo
+      Finance (fuente gratuita, sin garantía de exactitud y con posibles huecos). Beta y alfa
+      se estiman sobre un histórico fijo — ambos cambian según el período y el benchmark
+      elegidos (pruébalo tú mismo en el Paso 7). Un alfa histórico positivo no garantiza que
+      se repita: es una medida retrospectiva, no una predicción.
+    </div>
+    <p style="margin-top:20px" data-i18n="limits.reading">
+      Para profundizar: William Sharpe, <em>"Capital Asset Prices"</em>, Journal of Finance
+      (1964) — el paper original del CAPM; Eugene Fama y Kenneth French, el modelo de tres (y
+      luego cinco) factores que lo extiende; y el propio <a href="https://markowitz-portfolio-lab.vercel.app" target="_blank" rel="noopener">Markowitz Portfolio Lab</a>, la base de media-varianza sobre la que se construye el CAPM.
+    </p>
+  </div>
+</section>
+
+<section class="step" id="creador" style="border-bottom:none">
+  <div class="wrap">
+    <div class="step-head"><span class="step-num" data-i18n="creator.badge">CREADOR</span><h2 data-i18n="creator.title">Sobre el creador</h2></div>
+    <div class="creator-card">
+      <p data-i18n="creator.text" style="margin:0">Hecho por Andrés Londoño.</p>
+      <div class="creator-links">
+        <a href="https://github.com/andreslondonopar-ux" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://www.linkedin.com/in/andrés-londoño-paredes/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href="https://markowitz-portfolio-lab.vercel.app" target="_blank" rel="noopener">Markowitz Lab ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" data-i18n="footer.text">
+    CAPM Beta-Alpha Lab — proyecto educativo independiente, segundo de la serie junto a
+    Markowitz Portfolio Lab. Datos: Yahoo Finance. Cómputo: 100% en el navegador (JavaScript).
+  </div>
+</footer>
+
+<script src="assets/js/i18n.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="assets/js/capm.js"></script>
+<script src="assets/js/plots.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
