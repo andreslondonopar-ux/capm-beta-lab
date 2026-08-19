@@ -206,7 +206,13 @@
       <button class="primary" id="sml-update-btn" data-i18n="paso6.updateBtn">Actualizar SML</button>
     </div>
     <div class="status-line" id="sml-status-line" style="margin-top:8px"></div>
-    <div class="card" style="margin-top:16px"><div class="plot tall" id="plot-sml"></div></div>
+    <div class="card" style="margin-top:16px">
+      <div style="display:flex; justify-content:flex-end;">
+        <button type="button" class="table-toggle" id="sml-table-toggle" data-i18n="app.viewTable">Ver como tabla</button>
+      </div>
+      <div class="plot tall" id="plot-sml"></div>
+      <div id="sml-table-wrap" class="table-toggle-wrap" hidden></div>
+    </div>
   </div>
 </section>
 

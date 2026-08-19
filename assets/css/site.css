@@ -183,6 +183,14 @@ body.is-recalculating .step table.data-table {
   transition: opacity 0.15s ease;
 }
 
+/* Igual que arriba, pero acotado a una tarjeta puntual (ej. la SML) cuando solo esa
+   sección está recalculando — no toda la página como con is-recalculating global. */
+.card.is-dimmed .plot,
+.card.is-dimmed table.data-table {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
 /* --- Ticker input bar --- */
 .control-bar {
   max-width: 1400px;

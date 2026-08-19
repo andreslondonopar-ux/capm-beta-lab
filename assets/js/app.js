@@ -30,6 +30,8 @@ const ROLLING_WINDOW = 252;
   const smlUpdateBtn = el("sml-update-btn");
   const smlStatusLineEl = el("sml-status-line");
   const plotSmlEl = el("plot-sml");
+  const smlTableToggle = el("sml-table-toggle");
+  const smlTableWrap = el("sml-table-wrap");
 
   let state = null; // { assetTicker, benchmarkTicker, dates, prices, assetReturns, marketReturns, regression, rollingPoints, riskFree }
   let smlTickers = ["MSFT", "JPM", "XOM", "GLD", "TLT"];
@@ -229,6 +231,26 @@ const ROLLING_WINDOW = 252;
     renderSmlChips();
   }
 
+  function renderSmlTable(points) {
+    const sorted = [...points].sort((a, b) => b.returnAnnual - a.returnAnnual);
+    const rows = sorted
+      .map(
+        (p) =>
+          `<tr><td>${p.ticker}</td><td>${fmtNum(p.beta)}</td><td>${fmtPct(p.alphaAnnual)}</td><td>${fmtNum(p.r2)}</td><td>${fmtPct(p.returnAnnual)}</td></tr>`
+      )
+      .join("");
+    smlTableWrap.innerHTML = `<table class="data-table"><thead><tr><th>${I18N.t("app.tableAsset")}</th><th>${I18N.t("app.tableBeta")}</th><th>${I18N.t("app.tableAlpha")}</th><th>${I18N.t("app.tableR2")}</th><th>${I18N.t("app.tableReturn")}</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  function setupTableToggle(btn, wrapEl) {
+    btn.addEventListener("click", () => {
+      const isHidden = wrapEl.hasAttribute("hidden");
+      if (isHidden) wrapEl.removeAttribute("hidden");
+      else wrapEl.setAttribute("hidden", "");
+      btn.textContent = isHidden ? I18N.t("app.hideTable") : I18N.t("app.viewTable");
+    });
+  }
+
   async function runSmlPipeline() {
     if (smlTickerEntryInput.value.trim()) {
       addSmlTickersFromRaw(smlTickerEntryInput.value);
@@ -244,6 +266,7 @@ const ROLLING_WINDOW = 252;
     }
 
     smlUpdateBtn.disabled = true;
+    plotSmlEl.closest(".card").classList.add("is-dimmed");
     setSmlStatus(I18N.t("paso6.loading"));
 
     try {
@@ -261,27 +284,37 @@ const ROLLING_WINDOW = 252;
         );
       }
 
+      // Cualquier ticker que no traiga datos, o que traiga muy pocas fechas en común con el
+      // benchmark, se omite del gráfico — pero se le avisa al usuario cuál y por qué, en vez
+      // de dejarlo desaparecer en silencio.
+      const omitted = smlTickers.filter((t) => !data[t]).map((t) => `${t} — ${errors[t] || I18N.t("app.priceFetchError")}`);
+
       const points = [];
       for (const ticker of validTickers) {
         const aligned = CAPM.alignPrices({ [ticker]: data[ticker], [benchmarkTicker]: data[benchmarkTicker] });
-        if (aligned.dates.length < 60) continue;
+        if (aligned.dates.length < 60) {
+          omitted.push(`${ticker} — ${I18N.t("app.tooFewDates")}`);
+          continue;
+        }
         const tIdx = aligned.tickers.indexOf(ticker);
         const bIdx = aligned.tickers.indexOf(benchmarkTicker);
         const tReturns = CAPM.logReturns(aligned.prices.map((row) => row[tIdx]));
         const bReturns = CAPM.logReturns(aligned.prices.map((row) => row[bIdx]));
         const reg = CAPM.regress(tReturns, bReturns);
-        points.push({ ticker, beta: reg.beta, returnAnnual: reg.assetReturnAnnual, alphaAnnual: reg.alphaAnnual });
+        points.push({ ticker, beta: reg.beta, returnAnnual: reg.assetReturnAnnual, alphaAnnual: reg.alphaAnnual, r2: reg.r2 });
       }
 
       if (points.length === 0) throw new Error(I18N.t("app.tooFewDates"));
 
       const marketReturnAnnual = points.length ? state.regression.marketReturnAnnual : 0;
       Plots.renderSML(plotSmlEl, { points, riskFree, marketReturnAnnual });
-      setSmlStatus("");
+      renderSmlTable(points);
+      setSmlStatus(omitted.length ? I18N.t("app.omitted", { list: omitted.join(", ") }) : "");
     } catch (err) {
       setSmlStatus(err.message || I18N.t("app.unexpectedError"), true);
     } finally {
       smlUpdateBtn.disabled = false;
+      plotSmlEl.closest(".card").classList.remove("is-dimmed");
     }
   }
 
@@ -293,6 +326,7 @@ const ROLLING_WINDOW = 252;
   });
 
   smlUpdateBtn.addEventListener("click", runSmlPipeline);
+  setupTableToggle(smlTableToggle, smlTableWrap);
   smlTickerEntryInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
