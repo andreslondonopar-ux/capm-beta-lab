@@ -207,13 +207,15 @@ const I18N = (() => {
     "limits.reading": {
       es: `Para profundizar: William Sharpe, <em>"Capital Asset Prices"</em>, Journal of Finance
         (1964) — el paper original del CAPM; Eugene Fama y Kenneth French, el modelo de tres (y
-        luego cinco) factores que lo extiende; el propio <a href="https://markowitz-portfolio-lab.vercel.app" target="_blank" rel="noopener">Markowitz Portfolio Lab</a>, la base de media-varianza sobre la que se construye el CAPM; y
-        <a href="https://black-scholes-lab.vercel.app" target="_blank" rel="noopener">Black-Scholes / Options Greeks Lab</a>, tercero de la serie, sobre precio de opciones.`,
+        luego cinco) factores que lo extiende; el propio <a href="https://markowitz-portfolio-lab.vercel.app" target="_blank" rel="noopener">Markowitz Portfolio Lab</a>, la base de media-varianza sobre la que se construye el CAPM;
+        <a href="https://black-scholes-lab.vercel.app" target="_blank" rel="noopener">Black-Scholes / Options Greeks Lab</a>, sobre precio de opciones; y
+        <a href="https://var-risk-lab.vercel.app" target="_blank" rel="noopener">VaR Dashboard</a>, sobre cuánto podría perder un portafolio.`,
       en: `To go deeper: William Sharpe, <em>"Capital Asset Prices"</em>, Journal of Finance
         (1964) — the original CAPM paper; Eugene Fama and Kenneth French's three- (later
         five-) factor model, which extends it; <a href="https://markowitz-portfolio-lab.vercel.app" target="_blank" rel="noopener">Markowitz Portfolio Lab</a> itself, the
-        mean-variance foundation CAPM is built on; and
-        <a href="https://black-scholes-lab.vercel.app" target="_blank" rel="noopener">Black-Scholes / Options Greeks Lab</a>, third in the series, on option pricing.`,
+        mean-variance foundation CAPM is built on;
+        <a href="https://black-scholes-lab.vercel.app" target="_blank" rel="noopener">Black-Scholes / Options Greeks Lab</a>, on option pricing; and
+        <a href="https://var-risk-lab.vercel.app" target="_blank" rel="noopener">VaR Dashboard</a>, on how much a portfolio could lose.`,
     },
 
     "creator.badge": { es: "CREADOR", en: "CREATOR" },
@@ -221,8 +223,8 @@ const I18N = (() => {
     "creator.text": { es: "Hecho por Andrés Londoño.", en: "Made by Andrés Londoño." },
 
     "footer.text": {
-      es: "CAPM Beta-Alpha Lab — proyecto educativo independiente, segundo de la serie junto a Markowitz Portfolio Lab y Black-Scholes / Options Greeks Lab. Datos: Yahoo Finance. Cómputo: 100% en el navegador (JavaScript).",
-      en: "CAPM Beta-Alpha Lab — an independent educational project, second in the series alongside Markowitz Portfolio Lab and Black-Scholes / Options Greeks Lab. Data: Yahoo Finance. Computation: 100% in the browser (JavaScript).",
+      es: "CAPM Beta-Alpha Lab — proyecto educativo independiente, segundo de una serie de sitios sobre finanzas cuantitativas (ver Creador para los demás). Datos: Yahoo Finance. Cómputo: 100% en el navegador (JavaScript).",
+      en: "CAPM Beta-Alpha Lab — an independent educational project, second in a series of quantitative finance sites (see Creator for the rest). Data: Yahoo Finance. Computation: 100% in the browser (JavaScript).",
     },
 
     // --- Generado por JS ---
