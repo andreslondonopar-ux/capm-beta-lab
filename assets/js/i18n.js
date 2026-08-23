@@ -207,15 +207,13 @@ const I18N = (() => {
     "limits.reading": {
       es: `Para profundizar: William Sharpe, <em>"Capital Asset Prices"</em>, Journal of Finance
         (1964) — el paper original del CAPM; Eugene Fama y Kenneth French, el modelo de tres (y
-        luego cinco) factores que lo extiende; el propio <a href="https://markowitz-portfolio-lab.vercel.app" target="_blank" rel="noopener">Markowitz Portfolio Lab</a>, la base de media-varianza sobre la que se construye el CAPM;
-        <a href="https://black-scholes-lab.vercel.app" target="_blank" rel="noopener">Black-Scholes / Options Greeks Lab</a>, sobre precio de opciones; y
-        <a href="https://var-risk-lab.vercel.app" target="_blank" rel="noopener">VaR Dashboard</a>, sobre cuánto podría perder un portafolio.`,
+        luego cinco) factores que lo extiende; el propio <a href="https://markowitz-portfolio-lab.vercel.app" target="_blank" rel="noopener">Markowitz Portfolio Lab</a>, la base de media-varianza sobre la que se construye el CAPM; y el
+        resto de la serie de sitios sobre finanzas cuantitativas (ver Creador, abajo).`,
       en: `To go deeper: William Sharpe, <em>"Capital Asset Prices"</em>, Journal of Finance
         (1964) — the original CAPM paper; Eugene Fama and Kenneth French's three- (later
         five-) factor model, which extends it; <a href="https://markowitz-portfolio-lab.vercel.app" target="_blank" rel="noopener">Markowitz Portfolio Lab</a> itself, the
-        mean-variance foundation CAPM is built on;
-        <a href="https://black-scholes-lab.vercel.app" target="_blank" rel="noopener">Black-Scholes / Options Greeks Lab</a>, on option pricing; and
-        <a href="https://var-risk-lab.vercel.app" target="_blank" rel="noopener">VaR Dashboard</a>, on how much a portfolio could lose.`,
+        mean-variance foundation CAPM is built on; and the rest of the quantitative
+        finance series (see Creator, below).`,
     },
 
     "creator.badge": { es: "CREADOR", en: "CREATOR" },
