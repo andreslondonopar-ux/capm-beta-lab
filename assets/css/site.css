@@ -124,7 +124,7 @@ code { font-family: var(--font-mono); font-size: 0.9em; background: var(--accent
   border-radius: var(--radius);
   padding: 18px 22px;
 }
-.creator-links { display: flex; gap: 12px; }
+.creator-links { display: flex; flex-wrap: wrap; gap: 12px; }
 .creator-links a {
   font-family: var(--font-mono);
   font-size: 13px;
