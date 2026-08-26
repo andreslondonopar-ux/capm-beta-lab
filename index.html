@@ -99,6 +99,13 @@
       tecnológica volátil contra el S&P 500 (<code>SPY</code>) y luego contra el Nasdaq
       (<code>QQQ</code>) — el beta cambia porque el benchmark cambia.
     </p>
+    <div class="callout" data-i18n="paso1.rollCritique">
+      Esto no es solo un detalle práctico — Richard Roll (1977) mostró que el CAPM es, en
+      sentido estricto, intestable: la teoría habla del "portafolio de mercado" completo
+      (todos los activos riesgosos del mundo, no solo acciones de EE. UU.), que nunca se
+      observa directamente. <code>SPY</code> es un proxy útil, no el mercado verdadero —
+      por eso el beta medido siempre depende de qué proxy se elija.
+    </div>
   </div>
 </section>
 
@@ -179,6 +186,16 @@
       CAPM, más la descomposición del riesgo total en sistemático e idiosincrático.
     </p>
     <div id="stat-tiles" class="stat-grid"></div>
+    <p style="font-size:14.5px" data-i18n="paso5.newStatsNote">
+      Dos números adicionales, menos citados pero igual de reales: la <strong>beta
+      ajustada</strong> (Blume, 1975) reconoce que la beta cruda es un mal predictor fuera
+      de muestra — betas extremas tienden a "regresar" hacia 1 con el tiempo, así que la
+      industria (ej. Bloomberg) reporta una versión encogida hacia 1 en dos tercios; y el
+      <strong>Information Ratio</strong> (alfa dividido por el riesgo idiosincrático) junto
+      con si el alfa es <em>estadísticamente significativo</em> — un alfa histórico
+      positivo con pocos años de datos casi nunca alcanza a distinguirse del ruido, así de
+      difícil es demostrar skill real de un gestor.
+    </p>
     <div class="card">
       <h3 style="font-size:1rem" data-i18n="paso5.interpretation">Interpretación</h3>
       <p id="interpretation-text" style="margin:0"></p>
@@ -195,6 +212,14 @@
       para verlos ubicados frente a esa línea — por <strong>encima</strong> de la línea (alfa
       positivo, en <span style="color:var(--accent)">azul</span>) o por
       <strong>debajo</strong> (alfa negativo, en <span style="color:var(--accent3)">rojo</span>).
+    </p>
+    <p data-i18n="paso6.lowBetaAnomaly">
+      Con 3 o más activos, el gráfico también traza una <strong>línea empírica</strong>
+      (punteada) — la regresión real de retorno contra beta sobre tus propios activos. En
+      la práctica, esta línea suele salir más <em>plana</em> que la SML teórica: Frazzini
+      y Pedersen (2014) documentaron el fenómeno "betting against beta" en 18 de 19
+      mercados globales — activos de beta alta rinden menos, y de beta baja rinden más, de
+      lo que el CAPM predice.
     </p>
     <div class="control-bar" style="margin-top:0">
       <div class="field">

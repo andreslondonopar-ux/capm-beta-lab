@@ -61,6 +61,18 @@ const I18N = (() => {
         stock against the S&P 500 (<code>SPY</code>) and then against the Nasdaq
         (<code>QQQ</code>) — beta changes because the benchmark changes.`,
     },
+    "paso1.rollCritique": {
+      es: `Esto no es solo un detalle práctico — Richard Roll (1977) mostró que el CAPM es, en
+        sentido estricto, intestable: la teoría habla del "portafolio de mercado" completo
+        (todos los activos riesgosos del mundo, no solo acciones de EE. UU.), que nunca se
+        observa directamente. <code>SPY</code> es un proxy útil, no el mercado verdadero —
+        por eso el beta medido siempre depende de qué proxy se elija.`,
+      en: `This isn't just a practical detail — Richard Roll (1977) showed that the CAPM is,
+        strictly speaking, untestable: the theory refers to the complete "market portfolio"
+        (every risky asset in the world, not just U.S. stocks), which is never directly
+        observed. <code>SPY</code> is a useful proxy, not the true market — that's why
+        measured beta always depends on which proxy is chosen.`,
+    },
 
     "paso2.badge": { es: "PASO 2", en: "STEP 2" },
     "paso2.title": { es: "Datos históricos y retornos", en: "Historical data and returns" },
@@ -152,6 +164,24 @@ const I18N = (() => {
       en: `With the chosen asset and benchmark data, here are CAPM's three key numbers, plus
         the split of total risk into systematic and idiosyncratic.`,
     },
+    "paso5.newStatsNote": {
+      es: `Dos números adicionales, menos citados pero igual de reales: la <strong>beta
+        ajustada</strong> (Blume, 1975) reconoce que la beta cruda es un mal predictor fuera
+        de muestra — betas extremas tienden a "regresar" hacia 1 con el tiempo, así que la
+        industria (ej. Bloomberg) reporta una versión encogida hacia 1 en dos tercios; y el
+        <strong>Information Ratio</strong> (alfa dividido por el riesgo idiosincrático) junto
+        con si el alfa es <em>estadísticamente significativo</em> — un alfa histórico
+        positivo con pocos años de datos casi nunca alcanza a distinguirse del ruido, así de
+        difícil es demostrar skill real de un gestor.`,
+      en: `Two additional numbers, less cited but just as real: the <strong>adjusted
+        beta</strong> (Blume, 1975) recognizes that raw beta is a poor out-of-sample
+        predictor — extreme betas tend to "revert" toward 1 over time, so the industry
+        (e.g. Bloomberg) reports a version shrunk two-thirds of the way toward 1; and the
+        <strong>Information Ratio</strong> (alpha divided by idiosyncratic risk) together
+        with whether alpha is <em>statistically significant</em> — a positive historical
+        alpha with only a few years of data almost never rises above the noise, that's how
+        hard it is to demonstrate real manager skill.`,
+    },
     "paso5.interpretation": {
       es: "Interpretación",
       en: "Interpretation",
@@ -170,6 +200,20 @@ const I18N = (() => {
         where they land relative to that line — <strong>above</strong> it (positive alpha, in
         <span style="color:var(--accent)">blue</span>) or <strong>below</strong> it (negative
         alpha, in <span style="color:var(--accent3)">red</span>).`,
+    },
+    "paso6.lowBetaAnomaly": {
+      es: `Con 3 o más activos, el gráfico también traza una <strong>línea empírica</strong>
+        (punteada) — la regresión real de retorno contra beta sobre tus propios activos. En
+        la práctica, esta línea suele salir más <em>plana</em> que la SML teórica: Frazzini
+        y Pedersen (2014) documentaron el fenómeno "betting against beta" en 18 de 19
+        mercados globales — activos de beta alta rinden menos, y de beta baja rinden más, de
+        lo que el CAPM predice.`,
+      en: `With 3 or more assets, the chart also draws an <strong>empirical line</strong>
+        (dotted) — the real regression of return against beta over your own assets. In
+        practice, this line tends to come out <em>flatter</em> than the theoretical SML:
+        Frazzini and Pedersen (2014) documented the "betting against beta" phenomenon in 18
+        of 19 global markets — high-beta assets return less, and low-beta assets return
+        more, than the CAPM predicts.`,
     },
     "paso6.assetsLabel": { es: "Activos a comparar (uno a la vez — Enter para agregar)", en: "Assets to compare (one at a time — Enter to add)" },
     "paso6.updateBtn": { es: "Actualizar SML", en: "Update SML" },
@@ -248,12 +292,20 @@ const I18N = (() => {
     },
     "app.unexpectedError": { es: "Error inesperado.", en: "Unexpected error." },
     "app.statBeta": { es: "Beta (β)", en: "Beta (β)" },
+    "app.statBetaAdj": { es: "Beta ajustada (Blume)", en: "Adjusted beta (Blume)" },
     "app.statAlpha": { es: "Alfa anual (Jensen)", en: "Annual alpha (Jensen)" },
+    "app.statInformationRatio": { es: "Information Ratio", en: "Information Ratio" },
     "app.statR2": { es: "R²", en: "R²" },
     "app.statAssetReturn": { es: "Retorno anual del activo", en: "Asset annual return" },
     "app.statMarketReturn": { es: "Retorno anual del benchmark", en: "Benchmark annual return" },
     "app.statSystematic": { es: "Vol. sistemática", en: "Systematic vol." },
     "app.statIdiosyncratic": { es: "Vol. idiosincrática", en: "Idiosyncratic vol." },
+    "app.significant": { es: "significativo al 95%", en: "significant at 95%" },
+    "app.notSignificant": { es: "no significativo al 95%", en: "not significant at 95%" },
+    "app.zeroVarianceBenchmark": {
+      es: "El benchmark no tiene variación en este período (¿mismo ticker que el activo, o precio plano?) — no se puede calcular beta.",
+      en: "The benchmark has no variation in this period (same ticker as the asset, or flat price?) — beta can't be computed.",
+    },
     "app.interpAggressive": {
       es: "Con β = {beta}, {asset} es más volátil que el mercado — amplifica tanto las subidas como las bajadas de {benchmark}.",
       en: "With β = {beta}, {asset} is more volatile than the market — it amplifies both {benchmark}'s rallies and its drops.",
@@ -286,6 +338,7 @@ const I18N = (() => {
     "charts.marketReturnAxis": { es: "Retorno diario de {market} (%)", en: "{market} daily return (%)" },
     "charts.assetReturnAxis": { es: "Retorno diario de {asset} (%)", en: "{asset} daily return (%)" },
     "charts.smlLine": { es: "Security Market Line (teórica)", en: "Security Market Line (theoretical)" },
+    "charts.empiricalLine": { es: "Línea empírica (tus activos)", en: "Empirical line (your assets)" },
     "charts.assets": { es: "Activos", en: "Assets" },
     "charts.market": { es: "Mercado (benchmark)", en: "Market (benchmark)" },
     "charts.betaAxis": { es: "Beta (β)", en: "Beta (β)" },

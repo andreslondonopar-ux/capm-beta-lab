@@ -174,12 +174,43 @@ const Plots = (() => {
       hovertemplate: `${I18N.t("charts.market")}: β=1, %{y:.1f}%<extra></extra>`,
     };
 
+    const traces = [smlTrace, pointsTrace, marketTrace];
+
+    // Línea empírica: regresión OLS de retorno vs. beta sobre los propios activos
+    // graficados — la "betting against beta" de Frazzini-Pedersen (2014) documenta que
+    // esta línea suele salir más PLANA que la SML teórica (activos de beta alta rinden
+    // menos, y de beta baja rinden más, de lo que el CAPM predice). Con < 3 activos la
+    // regresión es poco significativa como para mostrarla.
+    if (points.length >= 3) {
+      const n = points.length;
+      const meanX = betas.reduce((a, b) => a + b, 0) / n;
+      const ys = points.map((p) => p.returnAnnual);
+      const meanY = ys.reduce((a, b) => a + b, 0) / n;
+      let cov = 0, varX = 0;
+      for (let i = 0; i < n; i++) {
+        cov += (betas[i] - meanX) * (ys[i] - meanY);
+        varX += (betas[i] - meanX) * (betas[i] - meanX);
+      }
+      if (varX > 1e-12) {
+        const slope = cov / varX;
+        const intercept = meanY - slope * meanX;
+        const empX = [xMin, xMax];
+        const empY = empX.map((b) => (intercept + slope * b) * 100);
+        traces.push({
+          x: empX, y: empY, mode: "lines", type: "scatter",
+          name: I18N.t("charts.empiricalLine"),
+          line: { color: COLORS.accent, width: 2, dash: "dot" },
+          hoverinfo: "skip",
+        });
+      }
+    }
+
     const layout = baseLayout(null, {
       hovermode: "closest",
       xaxis: { title: I18N.t("charts.betaAxis"), gridcolor: COLORS.grid, range: [xMin, xMax], zeroline: true },
       yaxis: { title: I18N.t("charts.returnAxisAnnual"), gridcolor: COLORS.grid },
     });
-    Plotly.newPlot(el, [smlTrace, pointsTrace, marketTrace], layout, CONFIG);
+    Plotly.newPlot(el, traces, layout, CONFIG);
   }
 
   // Serie de tiempo del beta calculado en ventana deslizante — muestra que beta no es

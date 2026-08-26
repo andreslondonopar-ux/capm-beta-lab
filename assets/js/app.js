@@ -75,9 +75,13 @@ const ROLLING_WINDOW = 252;
 
   function renderStatTiles(regression) {
     const betaUp = regression.beta >= 1;
+    const betaAdj = 0.33 + 0.67 * regression.beta;
+    const significant = Math.abs(regression.alphaTStat) >= 1.96;
     statTilesEl.innerHTML = `
       <div class="stat-tile"><div class="label">${I18N.t("app.statBeta")}</div><div class="value ${betaUp ? "up" : "down"}">${fmtNum(regression.beta)}</div></div>
-      <div class="stat-tile"><div class="label">${I18N.t("app.statAlpha")}</div><div class="value ${regression.alphaAnnual >= 0 ? "up" : "down"}">${fmtPct(regression.alphaAnnual)}</div></div>
+      <div class="stat-tile"><div class="label">${I18N.t("app.statBetaAdj")}</div><div class="value">${fmtNum(betaAdj)}</div></div>
+      <div class="stat-tile"><div class="label">${I18N.t("app.statAlpha")}</div><div class="value ${regression.alphaAnnual >= 0 ? "up" : "down"}">${fmtPct(regression.alphaAnnual)}<div class="stat-subnote">${significant ? I18N.t("app.significant") : I18N.t("app.notSignificant")}</div></div></div>
+      <div class="stat-tile"><div class="label">${I18N.t("app.statInformationRatio")}</div><div class="value">${fmtNum(regression.informationRatio)}</div></div>
       <div class="stat-tile"><div class="label">${I18N.t("app.statR2")}</div><div class="value">${fmtNum(regression.r2)}</div></div>
       <div class="stat-tile"><div class="label">${I18N.t("app.statAssetReturn")}</div><div class="value">${fmtPct(regression.assetReturnAnnual)}</div></div>
       <div class="stat-tile"><div class="label">${I18N.t("app.statMarketReturn")}</div><div class="value">${fmtPct(regression.marketReturnAnnual)}</div></div>
@@ -169,7 +173,12 @@ const ROLLING_WINDOW = 252;
       const marketReturns = CAPM.logReturns(marketPriceSeries);
       const riskFree = (parseFloat(riskfreeInput.value) || 0) / 100;
 
-      const regression = CAPM.regress(assetReturns, marketReturns);
+      const marketVarCheck = CAPM.variance(marketReturns, CAPM.mean(marketReturns));
+      if (marketVarCheck < 1e-12) {
+        throw new Error(I18N.t("app.zeroVarianceBenchmark"));
+      }
+
+      const regression = CAPM.regress(assetReturns, marketReturns, riskFree);
 
       let rollingPoints = [];
       if (assetReturns.length > ROLLING_WINDOW) {
@@ -300,7 +309,7 @@ const ROLLING_WINDOW = 252;
         const bIdx = aligned.tickers.indexOf(benchmarkTicker);
         const tReturns = CAPM.logReturns(aligned.prices.map((row) => row[tIdx]));
         const bReturns = CAPM.logReturns(aligned.prices.map((row) => row[bIdx]));
-        const reg = CAPM.regress(tReturns, bReturns);
+        const reg = CAPM.regress(tReturns, bReturns, riskFree);
         points.push({ ticker, beta: reg.beta, returnAnnual: reg.assetReturnAnnual, alphaAnnual: reg.alphaAnnual, r2: reg.r2 });
       }
 
